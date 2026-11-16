@@ -6,11 +6,11 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/model"
 )
 
-func GitRule() model.Rule {
+func GitRule(config model.RuleConfig) model.Rule {
 	return model.Rule{
 		Name:     "git",
-		Enabled:  true,
-		Priority: 1,
+		Enabled:  config.Enabled,
+		Priority: config.Priority,
 		Suggest:  gitFixer,
 	}
 }

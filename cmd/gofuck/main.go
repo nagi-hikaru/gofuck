@@ -9,6 +9,8 @@ import (
 
 	"github.com/nagi-hikaru/gofuck/internal/app"
 	"github.com/nagi-hikaru/gofuck/internal/cli"
+	"github.com/nagi-hikaru/gofuck/internal/config"
+	"github.com/nagi-hikaru/gofuck/internal/rules"
 	"github.com/nagi-hikaru/gofuck/internal/status"
 )
 
@@ -17,6 +19,15 @@ func main() {
 }
 
 func run() int {
+	// 加载配置
+	if err := config.Load(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return status.ExitCode(err)
+	}
+
+	// 注册规则
+	rules.Register()
+
 	// 创建上下文
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
