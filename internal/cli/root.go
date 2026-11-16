@@ -7,7 +7,6 @@ import (
 	"text/tabwriter"
 
 	"github.com/nagi-hikaru/gofuck/internal/app"
-	"github.com/nagi-hikaru/gofuck/internal/status"
 	"github.com/spf13/cobra"
 )
 
@@ -22,18 +21,12 @@ func New(fucker app.Fucker) *cobra.Command {
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			script := os.Getenv("GOFUCK_SCRIPT")
-			if os.Getenv("GOFUCK_PHASE") == "check" {
-				if _, ok := app.Parse(script); !ok {
-					return status.ErrNoCandidate
-				}
-				return nil
-			}
 
-			// 读取 -y 或 --yes 的值
 			yes, err := cmd.Flags().GetBool("yes")
 			if err != nil {
 				return err
 			}
+
 			return fucker.Fix(cmd.Context(), cmd.OutOrStdout(), script, os.Getenv("GOFUCK_OUTPUT_FILE"), yes)
 		},
 	}

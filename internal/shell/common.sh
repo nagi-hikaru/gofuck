@@ -11,8 +11,6 @@ fuck() {
         return 1
     }
 
-    GOFUCK_PHASE=check GOFUCK_SCRIPT="$previous" command fuck || return $?
-
     output_file="$HOME/.config/gofuck/output.txt"
     (
         capture_mask=$(umask)
@@ -29,7 +27,7 @@ fuck() {
     ) || return $?
 
     corrected=$(
-        GOFUCK_PHASE=fix GOFUCK_SCRIPT="$previous" \
+        GOFUCK_SCRIPT="$previous" \
         GOFUCK_OUTPUT_FILE="$output_file" command fuck "$@"
     ) || return $?
     [ -n "$corrected" ] || return 1
