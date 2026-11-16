@@ -28,7 +28,7 @@ func gitFixer(command model.Command) []string {
 	}
 
 	var candidates []string
-	for _, line := range strings.Split(command.Output, "\n") {
+	for line := range strings.SplitSeq(command.Output, "\n") {
 		if !strings.HasPrefix(line, "\t") {
 			continue
 		}

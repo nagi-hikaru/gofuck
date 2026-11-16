@@ -60,7 +60,11 @@ func Select(ctx context.Context, in *os.File, out io.Writer, candidates []string
 		WithFilter(false).
 		WithOnInterruptFunc(func() { canceled = true })
 
-	prompt := fitLine("Fuck which", max(1, columns-1))
+	const promptLabel = "Fuck which"
+	prompt := fitLine(promptLabel, max(1, columns-1))
+	if columns > len(promptLabel+" [enter/ctrl+c]") {
+		prompt = promptLabel + " [" + pterm.FgGreen.Sprint("enter") + "/" + pterm.FgRed.Sprint("ctrl+c") + "]"
+	}
 	selected, err := printer.Show(prompt)
 	if err != nil {
 		return "", err

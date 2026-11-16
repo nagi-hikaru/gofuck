@@ -14,6 +14,7 @@ func Register() {
 	// 注册规则
 	Rules = []model.Rule{
 		GitRule(ruleConfigOrDefault("git")),
+		LimaRule(ruleConfigOrDefault("lima")),
 	}
 
 	// 按 优先级 -> 字母 排序
