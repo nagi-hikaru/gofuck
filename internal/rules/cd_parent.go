@@ -1,6 +1,8 @@
 package rules
 
 import (
+	"strings"
+
 	"github.com/nagi-hikaru/gofuck/internal/config"
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
@@ -16,7 +18,7 @@ func cdParentRule(cfg config.RuleConfig) engine.Rule {
 }
 
 func cdParentMatcher(command engine.Command) bool {
-	return len(command.Words) == 1 && command.Words[0].Value == "cd.."
+	return strings.TrimSpace(command.Script) == "cd.."
 }
 
 func cdParentFixer(_ engine.Command) []string {

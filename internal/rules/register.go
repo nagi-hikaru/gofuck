@@ -17,7 +17,9 @@ func Register() {
 		limaRule(ruleConfigOrDefault("lima")),
 		cdMkdirRule(ruleConfigOrDefault("cd_mkdir")),
 		cdParentRule(ruleConfigOrDefault("cd_parent")),
+		cdRootRule(ruleConfigOrDefault("cd_root")),
 		rmrfRule(ruleConfigOrDefault("rm_rf")),
+		clearRule(ruleConfigOrDefault("clear")),
 	}
 
 	// 按 优先级 -> 字母 排序
