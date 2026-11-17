@@ -1,10 +1,29 @@
+_gofuck_is_fix_args() {
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -y|--yes|-y=true|--yes=true|-y=false|--yes=false) ;;
+            -m|--model)
+                [ "$#" -ge 2 ] || return 1
+                case "$2" in
+                    ''|-*) return 1 ;;
+                esac
+                shift
+                ;;
+            -m=?*|--model=?*) ;;
+            *) return 1 ;;
+        esac
+        shift
+    done
+    return 0
+}
+
 fuck() {
     local previous corrected output_file capture_mask
 
-    case "$#:${1-}" in
-        0:|1:-y|1:--yes|1:-y=true|1:--yes=true|1:-y=false|1:--yes=false) ;;
-        *) command fuck "$@"; return $? ;;
-    esac
+    if ! _gofuck_is_fix_args "$@"; then
+        command fuck "$@"
+        return $?
+    fi
 
     previous=$(_gofuck_previous) || {
         printf '%s\n' 'No recent command to correct.' >&2

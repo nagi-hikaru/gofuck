@@ -19,13 +19,25 @@ func RootHandler(fucker app.Fucker) func(*cobra.Command, []string) error {
 		if err != nil {
 			return err
 		}
+		provider, err := cmd.Flags().GetString("model")
+		if err != nil {
+			return err
+		}
 		if strings.TrimSpace(script) == "" {
 			return status.ErrNoHistory
 		}
 
 		ctx := cmd.Context()
 		command := fucker.LoadCommand(script, os.Getenv("GOFUCK_OUTPUT_FILE"))
-		candidates := fucker.Find(ctx, command)
+		var candidates []string
+		if cmd.Flags().Changed("model") {
+			candidates, err = fucker.AskAI(ctx, provider, command)
+			if err != nil {
+				return err
+			}
+		} else {
+			candidates = fucker.Find(ctx, command)
+		}
 		if err := ctx.Err(); err != nil {
 			return err
 		}

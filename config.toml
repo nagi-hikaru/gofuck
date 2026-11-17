@@ -1,0 +1,42 @@
+# Copy this example to ~/.config/gofuck/config.toml, or to
+# $GOFUCK_CONFIG_HOME/gofuck/config.toml if GOFUCK_CONFIG_HOME is set.
+#
+# Lower priority numbers are tried first. Write enabled explicitly when
+# overriding a rule's priority.
+
+[rules.cd_mkdir]
+enabled = true
+priority = 0
+
+[rules.cd_parent]
+enabled = true
+priority = 0
+
+[rules.cd_root]
+enabled = true
+priority = 0
+
+[rules.clear]
+enabled = true
+priority = 0
+
+[rules.git_not_command]
+enabled = true
+priority = 0
+
+[rules.lima]
+enabled = true
+priority = 0
+
+[rules.rm_rf]
+# Enable this rule explicitly if you want recursive deletion suggestions.
+enabled = false
+priority = 0
+
+# Use with "fuck -m deepseek". The provider's models share the same base URL
+# and API key. gofuck uses the first model in the list.
+# Replace the key in your local copy.
+[providers.deepseek]
+models = ["deepseek-flash"]
+base_url = "https://api.deepseek.com"
+api_key = "your-deepseek-api-key"

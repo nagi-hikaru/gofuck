@@ -1,4 +1,4 @@
-package model
+package engine
 
 // Word 保存解析后的词和它在原命令中的字节范围 [Start, End)
 type Word struct {

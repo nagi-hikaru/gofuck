@@ -27,6 +27,7 @@ func New(fucker app.Fucker) *cobra.Command {
 	}
 
 	root.Flags().BoolP("yes", "y", false, "Run the first suggestion without confirmation")
+	root.Flags().StringP("model", "m", "", "Send the previous command and stderr to a model (deepseek)")
 
 	root.AddCommand(rules)
 

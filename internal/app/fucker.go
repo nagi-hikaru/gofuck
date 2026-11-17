@@ -6,8 +6,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/nagi-hikaru/gofuck/internal/ai"
+	"github.com/nagi-hikaru/gofuck/internal/config"
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 	"github.com/nagi-hikaru/gofuck/internal/rules"
+	"github.com/nagi-hikaru/gofuck/internal/status"
 )
 
 type Fucker interface {
@@ -81,6 +84,31 @@ func (f *FuckerImpl) Find(ctx context.Context, command engine.Command) []string 
 		}
 	}
 	return scripts
+}
+
+// AskAI 向指定模型请求修正候选。
+func (*FuckerImpl) AskAI(ctx context.Context, provider string, command engine.Command) ([]string, error) {
+	cfg, ok := config.Config.ProvidersConfig[provider]
+	if !ok {
+		return nil, status.ErrUnsupportedProvider
+	}
+	if len(cfg.Models) == 0 {
+		return nil, status.ErrNoModelsForProvider
+	}
+
+	candidates, err := ai.Suggest(ctx, cfg, cfg.Models[0], ai.Input{
+		Script: command.Script,
+		Output: command.Output,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	scripts := make([]string, 0, len(candidates))
+	for _, candidate := range candidates {
+		scripts = append(scripts, candidate.Script)
+	}
+	return scripts, nil
 }
 
 // RuleList 返回各条规则的名称、状态和优先级。

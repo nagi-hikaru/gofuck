@@ -33,8 +33,7 @@ func Load() error {
 		return fmt.Errorf("read %s: %w", path, err)
 	}
 
-	// 解析配置文件
-	if err := loader.UnmarshalExact(&Config.RulesConfig); err != nil {
+	if err := loader.UnmarshalExact(&Config); err != nil {
 		return fmt.Errorf("decode %s: %w", path, err)
 	}
 	return nil
