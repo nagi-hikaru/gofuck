@@ -1,12 +1,8 @@
 package cli
 
 import (
-	"fmt"
-	"os"
-	"strings"
-	"text/tabwriter"
-
 	"github.com/nagi-hikaru/gofuck/internal/app"
+	"github.com/nagi-hikaru/gofuck/internal/handler"
 	"github.com/spf13/cobra"
 )
 
@@ -19,16 +15,7 @@ func New(fucker app.Fucker) *cobra.Command {
 		Args:          cobra.NoArgs,
 		SilenceErrors: true,
 		SilenceUsage:  true,
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			script := os.Getenv("GOFUCK_SCRIPT")
-
-			yes, err := cmd.Flags().GetBool("yes")
-			if err != nil {
-				return err
-			}
-
-			return fucker.Fix(cmd.Context(), cmd.OutOrStdout(), script, os.Getenv("GOFUCK_OUTPUT_FILE"), yes)
-		},
+		RunE:          handler.RootHandler(fucker),
 	}
 
 	rules := &cobra.Command{
@@ -36,19 +23,7 @@ func New(fucker app.Fucker) *cobra.Command {
 		Short: "List correction rules",
 		Long:  "Show each correction rule, whether it is enabled, and its effective priority.",
 		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			rows := fucker.RuleList()
-			out := tabwriter.NewWriter(cmd.OutOrStdout(), 0, 8, 2, ' ', 0)
-			if _, err := fmt.Fprintf(out, "total %d\n", len(rows)); err != nil {
-				return err
-			}
-			for _, row := range rows {
-				if _, err := fmt.Fprintln(out, strings.Join(row, "\t")); err != nil {
-					return err
-				}
-			}
-			return out.Flush()
-		},
+		RunE:  handler.RulesHandler(fucker),
 	}
 
 	root.Flags().BoolP("yes", "y", false, "Run the first suggestion without confirmation")

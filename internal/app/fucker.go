@@ -2,21 +2,18 @@ package app
 
 import (
 	"context"
-	"fmt"
-	"io"
-	"os"
 	"sort"
 	"strconv"
-	"strings"
 
 	"github.com/nagi-hikaru/gofuck/internal/model"
 	"github.com/nagi-hikaru/gofuck/internal/rules"
-	"github.com/nagi-hikaru/gofuck/internal/status"
 )
 
 type Fucker interface {
+	LoadCommand(script, outputFile string) model.Command
+	Find(ctx context.Context, command model.Command) []string
+	AskAI(ctx context.Context, command model.Command) []string
 	RuleList() [][]string
-	Fix(ctx context.Context, out io.Writer, script, outputFile string, yes bool) error
 }
 
 type FuckerImpl struct {
@@ -29,55 +26,8 @@ func NewFucker() Fucker {
 	}
 }
 
-// RuleList 返回各条规则的名称、状态和优先级。
-func (f *FuckerImpl) RuleList() [][]string {
-	rows := make([][]string, 0, len(f.rules))
-	for _, rule := range f.rules {
-		status := "disabled"
-		if rule.Enabled {
-			status = "enabled"
-		}
-		rows = append(rows, []string{rule.Name, status, strconv.Itoa(rule.Priority)})
-	}
-	return rows
-}
-
-// Fix 查找、选择并输出修正后的命令
-func (f *FuckerImpl) Fix(ctx context.Context, out io.Writer, script, outputFile string, yes bool) error {
-	if strings.TrimSpace(script) == "" {
-		return status.ErrNoHistory
-	}
-
-	var err error
-
-	command := loadCommand(script, outputFile)
-	candidates := find(ctx, command, f.rules)
-	if err = ctx.Err(); err != nil {
-		return err
-	}
-	if len(candidates) == 0 {
-		return status.ErrNoCandidate
-	}
-
-	// -y 直接采用首个候选，否则交给用户选择
-	selected := candidates[0]
-	if !yes {
-		selected, err = Select(ctx, os.Stdin, os.Stderr, candidates)
-		if err != nil {
-			return err
-		}
-	}
-	// 输出前再次检查是否已取消
-	if err = ctx.Err(); err != nil {
-		return err
-	}
-	// 将修正命令写到 out
-	_, err = fmt.Fprintln(out, selected)
-	return err
-}
-
-// loadCommand 解析命令并读取 shell 已采集的诊断
-func loadCommand(script, outputFile string) model.Command {
+// LoadCommand 解析命令并读取 shell 已采集的诊断。
+func (*FuckerImpl) LoadCommand(script, outputFile string) model.Command {
 	words, _ := Parse(script)
 	output, _ := readOutput(outputFile)
 
@@ -88,14 +38,14 @@ func loadCommand(script, outputFile string) model.Command {
 	}
 }
 
-// find 运行传入的规则，再对候选排序和去重
-func find(ctx context.Context, command model.Command, ruleList []model.Rule) []string {
+// Find 运行已注册的规则，再对候选排序和去重。
+func (f *FuckerImpl) Find(ctx context.Context, command model.Command) []string {
 	var candidates []model.Candidate
-	for _, rule := range ruleList {
+	for _, rule := range f.rules {
 		if ctx.Err() != nil {
 			return nil
 		}
-		
+
 		if !rule.Enabled {
 			continue
 		}
@@ -128,4 +78,21 @@ func find(ctx context.Context, command model.Command, ruleList []model.Rule) []s
 		}
 	}
 	return scripts
+}
+
+func (f *FuckerImpl) AskAI(ctx context.Context, command model.Command) []string {
+	return []string{}
+}
+
+// RuleList 返回各条规则的名称、状态和优先级。
+func (f *FuckerImpl) RuleList() [][]string {
+	rows := make([][]string, 0, len(f.rules))
+	for _, rule := range f.rules {
+		status := "disabled"
+		if rule.Enabled {
+			status = "enabled"
+		}
+		rows = append(rows, []string{rule.Name, status, strconv.Itoa(rule.Priority)})
+	}
+	return rows
 }
