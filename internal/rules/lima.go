@@ -3,20 +3,21 @@ package rules
 import (
 	"strings"
 
-	"github.com/nagi-hikaru/gofuck/internal/model"
+	"github.com/nagi-hikaru/gofuck/internal/config"
+	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func limaRule(cfg model.RuleConfig) model.Rule {
-	return model.Rule{
+func limaRule(cfg config.RuleConfig) engine.Rule {
+	return engine.Rule{
 		Name:     "lima",
 		Enabled:  cfg.Enabled,
 		Priority: cfg.Priority,
-		Match: limaMatcher,
-		Fix:  limaFixer,
+		Match:    limaMatcher,
+		Fix:      limaFixer,
 	}
 }
 
-func limaMatcher(command model.Command) bool {
+func limaMatcher(command engine.Command) bool {
 	if len(command.Words) < 2 || command.Words[0].Value != "limactl" {
 		return false
 	}
@@ -26,7 +27,7 @@ func limaMatcher(command model.Command) bool {
 	return true
 }
 
-func limaFixer(command model.Command) []string {
+func limaFixer(command engine.Command) []string {
 	word := command.Words[1]
 	var candidates []string
 	for line := range strings.SplitSeq(command.Output, `\n`) {

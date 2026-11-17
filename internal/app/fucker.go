@@ -4,20 +4,21 @@ import (
 	"context"
 	"sort"
 	"strconv"
+	"strings"
 
-	"github.com/nagi-hikaru/gofuck/internal/model"
+	"github.com/nagi-hikaru/gofuck/internal/engine"
 	"github.com/nagi-hikaru/gofuck/internal/rules"
 )
 
 type Fucker interface {
-	LoadCommand(script, outputFile string) model.Command
-	Find(ctx context.Context, command model.Command) []string
-	AskAI(ctx context.Context, command model.Command) []string
+	LoadCommand(script, outputFile string) engine.Command
+	Find(ctx context.Context, command engine.Command) []string
+	AskAI(ctx context.Context, provider string, command engine.Command) ([]string, error)
 	RuleList() [][]string
 }
 
 type FuckerImpl struct {
-	rules []model.Rule
+	rules []engine.Rule
 }
 
 func NewFucker() Fucker {
@@ -27,11 +28,11 @@ func NewFucker() Fucker {
 }
 
 // LoadCommand 解析命令并读取 shell 已采集的诊断。
-func (*FuckerImpl) LoadCommand(script, outputFile string) model.Command {
+func (*FuckerImpl) LoadCommand(script, outputFile string) engine.Command {
 	words, _ := Parse(script)
 	output, _ := readOutput(outputFile)
 
-	return model.Command{
+	return engine.Command{
 		Script: script,
 		Words:  words,
 		Output: output,
@@ -39,8 +40,10 @@ func (*FuckerImpl) LoadCommand(script, outputFile string) model.Command {
 }
 
 // Find 运行已注册的规则，再对候选排序和去重。
-func (f *FuckerImpl) Find(ctx context.Context, command model.Command) []string {
-	var candidates []model.Candidate
+func (f *FuckerImpl) Find(ctx context.Context, command engine.Command) []string {
+	// 保留本地规则原有的匹配行为，给模型的诊断则保留原文。
+	command.Output = strings.ToLower(command.Output)
+	var candidates []engine.Candidate
 	for _, rule := range f.rules {
 		if ctx.Err() != nil {
 			return nil
@@ -55,7 +58,7 @@ func (f *FuckerImpl) Find(ctx context.Context, command model.Command) []string {
 		}
 
 		for index, script := range rule.Fix(command) {
-			candidates = append(candidates, model.Candidate{
+			candidates = append(candidates, engine.Candidate{
 				Script: script,
 				Rule:   rule.Name,
 				Weight: rule.Priority * (index + 1),
@@ -78,10 +81,6 @@ func (f *FuckerImpl) Find(ctx context.Context, command model.Command) []string {
 		}
 	}
 	return scripts
-}
-
-func (f *FuckerImpl) AskAI(ctx context.Context, command model.Command) []string {
-	return []string{}
 }
 
 // RuleList 返回各条规则的名称、状态和优先级。

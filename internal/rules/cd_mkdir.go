@@ -4,11 +4,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nagi-hikaru/gofuck/internal/model"
+	"github.com/nagi-hikaru/gofuck/internal/config"
+	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func cdMkdirRule(cfg model.RuleConfig) model.Rule {
-	return model.Rule{
+func cdMkdirRule(cfg config.RuleConfig) engine.Rule {
+	return engine.Rule{
 		Name:     "cd_mkdir",
 		Enabled:  cfg.Enabled,
 		Priority: cfg.Priority,
@@ -17,7 +18,7 @@ func cdMkdirRule(cfg model.RuleConfig) model.Rule {
 	}
 }
 
-func cdMkdirMatcher(command model.Command) bool {
+func cdMkdirMatcher(command engine.Command) bool {
 	if len(command.Words) < 2 || command.Words[0].Value != "cd" {
 		return false
 	}
@@ -28,7 +29,7 @@ func cdMkdirMatcher(command model.Command) bool {
 	return os.IsNotExist(err)
 }
 
-func cdMkdirFixer(command model.Command) []string {
+func cdMkdirFixer(command engine.Command) []string {
 	path := command.Words[1]
 	rawPath := command.Script[path.Start:path.End]
 	return []string{"mkdir -p -- " + rawPath + " && " + command.Script}

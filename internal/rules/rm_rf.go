@@ -4,11 +4,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nagi-hikaru/gofuck/internal/model"
+	"github.com/nagi-hikaru/gofuck/internal/config"
+	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func rmrfRule(cfg model.RuleConfig) model.Rule {
-	return model.Rule{
+func rmrfRule(cfg config.RuleConfig) engine.Rule {
+	return engine.Rule{
 		Name:     "rm_rf",
 		Enabled:  cfg.Enabled,
 		Priority: cfg.Priority,
@@ -17,7 +18,7 @@ func rmrfRule(cfg model.RuleConfig) model.Rule {
 	}
 }
 
-func rmrfMatcher(command model.Command) bool {
+func rmrfMatcher(command engine.Command) bool {
 	if len(command.Words) < 2 || command.Words[0].Value != "rm" {
 		return false
 	}
@@ -28,7 +29,7 @@ func rmrfMatcher(command model.Command) bool {
 	return err == nil && info.IsDir()
 }
 
-func rmrfFixer(command model.Command) []string {
+func rmrfFixer(command engine.Command) []string {
 	path := command.Words[1]
 	rawPath := command.Script[path.Start:path.End]
 	return []string{"rm -rf -- " + rawPath}

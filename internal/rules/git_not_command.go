@@ -3,11 +3,12 @@ package rules
 import (
 	"strings"
 
-	"github.com/nagi-hikaru/gofuck/internal/model"
+	"github.com/nagi-hikaru/gofuck/internal/config"
+	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func gitRule(cfg model.RuleConfig) model.Rule {
-	return model.Rule{
+func gitRule(cfg config.RuleConfig) engine.Rule {
+	return engine.Rule{
 		Name:     "git_not_command",
 		Enabled:  cfg.Enabled,
 		Priority: cfg.Priority,
@@ -16,7 +17,7 @@ func gitRule(cfg model.RuleConfig) model.Rule {
 	}
 }
 
-func gitMatcher(command model.Command) bool {
+func gitMatcher(command engine.Command) bool {
 	if len(command.Words) < 2 || command.Words[0].Value != "git" {
 		return false
 	}
@@ -26,7 +27,7 @@ func gitMatcher(command model.Command) bool {
 	return true
 }
 
-func gitFixer(command model.Command) []string {
+func gitFixer(command engine.Command) []string {
 	word := command.Words[1]
 	var candidates []string
 	for line := range strings.SplitSeq(command.Output, "\n") {

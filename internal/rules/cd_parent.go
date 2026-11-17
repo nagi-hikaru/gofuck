@@ -1,9 +1,12 @@
 package rules
 
-import "github.com/nagi-hikaru/gofuck/internal/model"
+import (
+	"github.com/nagi-hikaru/gofuck/internal/config"
+	"github.com/nagi-hikaru/gofuck/internal/engine"
+)
 
-func cdParentRule(cfg model.RuleConfig) model.Rule {
-	return model.Rule{
+func cdParentRule(cfg config.RuleConfig) engine.Rule {
+	return engine.Rule{
 		Name:     "cd_parent",
 		Enabled:  cfg.Enabled,
 		Priority: cfg.Priority,
@@ -12,10 +15,10 @@ func cdParentRule(cfg model.RuleConfig) model.Rule {
 	}
 }
 
-func cdParentMatcher(command model.Command) bool {
+func cdParentMatcher(command engine.Command) bool {
 	return len(command.Words) == 1 && command.Words[0].Value == "cd.."
 }
 
-func cdParentFixer(_ model.Command) []string {
+func cdParentFixer(_ engine.Command) []string {
 	return []string{"cd .."}
 }

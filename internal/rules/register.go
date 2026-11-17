@@ -4,15 +4,15 @@ import (
 	"sort"
 
 	"github.com/nagi-hikaru/gofuck/internal/config"
-	"github.com/nagi-hikaru/gofuck/internal/model"
+	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-var Rules []model.Rule
+var Rules []engine.Rule
 
 // Register 根据已加载的配置注册规则
 func Register() {
 	// 注册规则
-	Rules = []model.Rule{
+	Rules = []engine.Rule{
 		gitRule(ruleConfigOrDefault("git_not_command")),
 		limaRule(ruleConfigOrDefault("lima")),
 		cdMkdirRule(ruleConfigOrDefault("cd_mkdir")),
@@ -30,9 +30,9 @@ func Register() {
 	})
 }
 
-func ruleConfigOrDefault(name string) model.RuleConfig {
+func ruleConfigOrDefault(name string) config.RuleConfig {
 	if cfg, ok := config.Config.RulesConfig[name]; ok {
 		return cfg
 	}
-	return model.RuleConfig{Enabled: true, Priority: 0}
+	return config.RuleConfig{Enabled: true, Priority: 0}
 }
