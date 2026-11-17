@@ -5,5 +5,6 @@ type Rule struct {
 	Name     string
 	Enabled  bool
 	Priority int // 数值越小，越先检查
-	Suggest  func(Command) []string
+	Match    func(Command) bool
+	Fix      func(Command) []string
 }

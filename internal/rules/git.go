@@ -6,27 +6,28 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/model"
 )
 
-func GitRule(config model.RuleConfig) model.Rule {
+func GitRule(cfg model.RuleConfig) model.Rule {
 	return model.Rule{
 		Name:     "git",
-		Enabled:  config.Enabled,
-		Priority: config.Priority,
-		Suggest:  gitFixer,
+		Enabled:  cfg.Enabled,
+		Priority: cfg.Priority,
+		Match:    gitMatcher,
+		Fix:      gitFixer,
 	}
 }
 
-func gitFixer(command model.Command) []string {
+func gitMatcher(command model.Command) bool {
 	if len(command.Words) < 2 || command.Words[0].Value != "git" {
-		return nil
+		return false
 	}
-	word := command.Words[1]
-	if !strings.Contains(
-		command.Output,
-		"git: '"+word.Value+"' is not a git command",
-	) {
-		return nil
+	if !strings.Contains(command.Output, "not a git command") {
+		return false
 	}
+	return true
+}
 
+func gitFixer(command model.Command) []string {
+	word := command.Words[1]
 	var candidates []string
 	for line := range strings.SplitSeq(command.Output, "\n") {
 		if !strings.HasPrefix(line, "\t") {

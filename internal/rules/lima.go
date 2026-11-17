@@ -6,23 +6,27 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/model"
 )
 
-func LimaRule(config model.RuleConfig) model.Rule {
+func LimaRule(cfg model.RuleConfig) model.Rule {
 	return model.Rule{
 		Name:     "lima",
-		Enabled:  config.Enabled,
-		Priority: config.Priority,
-		Suggest:  LimaFixer,
+		Enabled:  cfg.Enabled,
+		Priority: cfg.Priority,
+		Match: limaMatcher,
+		Fix:  limaFixer,
 	}
 }
 
-func LimaFixer(command model.Command) []string {
+func limaMatcher(command model.Command) bool {
 	if len(command.Words) < 2 || command.Words[0].Value != "limactl" {
-		return nil
+		return false
 	}
 	if !strings.Contains(command.Output, "unknown command") {
-		return nil
+		return false
 	}
+	return true
+}
 
+func limaFixer(command model.Command) []string {
 	word := command.Words[1]
 	var candidates []string
 	for line := range strings.SplitSeq(command.Output, `\n`) {

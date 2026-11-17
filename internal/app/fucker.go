@@ -95,7 +95,16 @@ func find(ctx context.Context, command model.Command, ruleList []model.Rule) []s
 		if ctx.Err() != nil {
 			return nil
 		}
-		for index, script := range rule.Suggest(command) {
+		
+		if !rule.Enabled {
+			continue
+		}
+
+		if !rule.Match(command) {
+			continue
+		}
+
+		for index, script := range rule.Fix(command) {
 			candidates = append(candidates, model.Candidate{
 				Script: script,
 				Rule:   rule.Name,
