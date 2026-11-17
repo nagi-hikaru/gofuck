@@ -1,4 +1,4 @@
-package rules
+package shell
 
 import (
 	"strings"
@@ -7,7 +7,7 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func cdParentRule(cfg config.RuleConfig) engine.Rule {
+func CdParentRule(cfg config.RuleConfig) engine.Rule {
 	return engine.Rule{
 		Name:     "cd_parent",
 		Enabled:  cfg.Enabled,

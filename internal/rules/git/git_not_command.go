@@ -1,4 +1,4 @@
-package rules
+package git
 
 import (
 	"strings"
@@ -7,7 +7,7 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func gitRule(cfg config.RuleConfig) engine.Rule {
+func GitRule(cfg config.RuleConfig) engine.Rule {
 	return engine.Rule{
 		Name:     "git_not_command",
 		Enabled:  cfg.Enabled,

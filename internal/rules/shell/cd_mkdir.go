@@ -1,4 +1,4 @@
-package rules
+package shell
 
 import (
 	"os"
@@ -8,7 +8,7 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func cdMkdirRule(cfg config.RuleConfig) engine.Rule {
+func CdMkdirRule(cfg config.RuleConfig) engine.Rule {
 	return engine.Rule{
 		Name:     "cd_mkdir",
 		Enabled:  cfg.Enabled,

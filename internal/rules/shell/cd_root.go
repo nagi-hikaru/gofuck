@@ -1,4 +1,4 @@
-package rules
+package shell
 
 import (
 	"strings"
@@ -7,7 +7,7 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func cdRootRule(cfg config.RuleConfig) engine.Rule {
+func CdRootRule(cfg config.RuleConfig) engine.Rule {
 	return engine.Rule{
 		Name:     "cd_root",
 		Enabled:  cfg.Enabled,

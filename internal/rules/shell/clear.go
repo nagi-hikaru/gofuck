@@ -1,4 +1,4 @@
-package rules
+package shell
 
 import (
 	"slices"
@@ -7,7 +7,7 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func clearRule(cfg config.RuleConfig) engine.Rule {
+func ClearRule(cfg config.RuleConfig) engine.Rule {
 	return engine.Rule{
 		Name:     "clear",
 		Enabled:  cfg.Enabled,

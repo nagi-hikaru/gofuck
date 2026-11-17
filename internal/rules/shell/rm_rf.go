@@ -1,4 +1,4 @@
-package rules
+package shell
 
 import (
 	"os"
@@ -8,7 +8,7 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/engine"
 )
 
-func rmrfRule(cfg config.RuleConfig) engine.Rule {
+func RmRFRule(cfg config.RuleConfig) engine.Rule {
 	return engine.Rule{
 		Name:     "rm_rf",
 		Enabled:  cfg.Enabled,

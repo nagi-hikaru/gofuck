@@ -5,6 +5,8 @@ import (
 
 	"github.com/nagi-hikaru/gofuck/internal/config"
 	"github.com/nagi-hikaru/gofuck/internal/engine"
+	"github.com/nagi-hikaru/gofuck/internal/rules/git"
+	"github.com/nagi-hikaru/gofuck/internal/rules/shell"
 )
 
 var Rules []engine.Rule
@@ -13,13 +15,13 @@ var Rules []engine.Rule
 func Register() {
 	// 注册规则
 	Rules = []engine.Rule{
-		gitRule(ruleConfigOrDefault("git_not_command")),
+		git.GitRule(ruleConfigOrDefault("git_not_command")),
 		limaRule(ruleConfigOrDefault("lima")),
-		cdMkdirRule(ruleConfigOrDefault("cd_mkdir")),
-		cdParentRule(ruleConfigOrDefault("cd_parent")),
-		cdRootRule(ruleConfigOrDefault("cd_root")),
-		rmrfRule(ruleConfigOrDefault("rm_rf")),
-		clearRule(ruleConfigOrDefault("clear")),
+		shell.CdMkdirRule(ruleConfigOrDefault("cd_mkdir")),
+		shell.CdParentRule(ruleConfigOrDefault("cd_parent")),
+		shell.CdRootRule(ruleConfigOrDefault("cd_root")),
+		shell.RmRFRule(ruleConfigOrDefault("rm_rf")),
+		shell.ClearRule(ruleConfigOrDefault("clear")),
 	}
 
 	// 按 优先级 -> 字母 排序
