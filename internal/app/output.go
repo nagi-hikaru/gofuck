@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"strings"
 )
 
 const maxOutput = 128 * 1024
@@ -34,5 +35,5 @@ func readOutput(path string) (string, bool) {
 		data = data[:lastNewline+1]
 	}
 
-	return string(data), true
+	return strings.ToLower(string(data)), true
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/model"
 )
 
-func LimaRule(cfg model.RuleConfig) model.Rule {
+func limaRule(cfg model.RuleConfig) model.Rule {
 	return model.Rule{
 		Name:     "lima",
 		Enabled:  cfg.Enabled,

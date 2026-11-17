@@ -13,8 +13,11 @@ var Rules []model.Rule
 func Register() {
 	// 注册规则
 	Rules = []model.Rule{
-		GitRule(ruleConfigOrDefault("git")),
-		LimaRule(ruleConfigOrDefault("lima")),
+		gitRule(ruleConfigOrDefault("git_not_command")),
+		limaRule(ruleConfigOrDefault("lima")),
+		cdMkdirRule(ruleConfigOrDefault("cd_mkdir")),
+		cdParentRule(ruleConfigOrDefault("cd_parent")),
+		rmrfRule(ruleConfigOrDefault("rm_rf")),
 	}
 
 	// 按 优先级 -> 字母 排序

@@ -6,9 +6,9 @@ import (
 	"github.com/nagi-hikaru/gofuck/internal/model"
 )
 
-func GitRule(cfg model.RuleConfig) model.Rule {
+func gitRule(cfg model.RuleConfig) model.Rule {
 	return model.Rule{
-		Name:     "git",
+		Name:     "git_not_command",
 		Enabled:  cfg.Enabled,
 		Priority: cfg.Priority,
 		Match:    gitMatcher,
