@@ -1,3 +1,4 @@
+# 判断是否是需要修正的命令
 _gofuck_is_fix_args() {
     while [ "$#" -gt 0 ]; do
         case "$1" in

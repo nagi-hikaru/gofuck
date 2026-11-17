@@ -26,10 +26,19 @@ func New(fucker app.Fucker) *cobra.Command {
 		RunE:  handler.RulesHandler(fucker),
 	}
 
+	init := &cobra.Command{
+		Use:       "init <shell>",
+		Short:     "Print the shell integration script",
+		Long:      "Print the shell integration script for Zsh or Bash. Load it in your shell startup file to enable command correction.",
+		Args:      cobra.ExactArgs(1),
+		ValidArgs: []string{"zsh", "bash"},
+		RunE:      handler.InitHandler,
+	}
+
 	root.Flags().BoolP("yes", "y", false, "Run the first suggestion without confirmation")
 	root.Flags().StringP("model", "m", "", "Send the previous command and stderr to a model (deepseek)")
 
-	root.AddCommand(rules)
+	root.AddCommand(rules, init)
 
 	return root
 }
